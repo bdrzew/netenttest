@@ -1,0 +1,35 @@
+<configuration>
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%-5p [%d{ISO8601}] %m%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator>
+            <key>appendername</key>
+            <defaultValue>default</defaultValue>
+        </discriminator>
+        <timeout>60 seconds</timeout>
+        <sift>
+            <appender name="file-${appendername}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>target/cucumber/log/${appendername}.log</file>
+                <append>true</append>
+                <layout class="ch.qos.logback.classic.PatternLayout">
+                    <pattern>%-5p [%d{ISO8601}] %m%n</pattern>
+                </layout>
+                <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                    <maxIndex>1</maxIndex>
+                    <FileNamePattern>target/cucumber/log/${appendername}.log.%i</FileNamePattern>
+                </rollingPolicy>
+                <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                    <MaxFileSize>1MB</MaxFileSize>
+                </triggeringPolicy>
+            </appender>
+        </sift>
+    </appender>
+    <root level="debug" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="SIFT"/>
+    </root>
+</configuration>
